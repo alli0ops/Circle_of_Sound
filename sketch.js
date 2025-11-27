@@ -79,7 +79,7 @@ let volumeDefault = 1;
 // Presets holding default parameters and songs
 // [name, fmax, fmin, dbmax, dbmin, highPass, lowPass, circleScaleFactor, NOT USED numberOfBins, songFile (pushed in preload)]
 
-let soundButtonArray = Array(presets.length);
+let soundButtonArray = Array((presets && presets.length) || 0);
 let currentPlayingSoundIndex = -1;
 let currentSoundFile;
 
