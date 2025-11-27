@@ -20,11 +20,5 @@ On the right side you can show advanced settings :
 
 Pressing the **F** key on your keyboard will toggle fullscreen
 
-## Setup
-You will need to have a local http server running on your machine to host this code. 
-[This is how I did it](https://github.com/processing/p5.js/wiki/Local-server#node-http-server)
-
-Once you've installed Node.js and http-server just run either scripts called `start_http_server` and navigate to `localhost:8080` on your browser
-
 ## TO-DO
 - Possibility to show exact frequency under the mouse cursor if you want further analysis
