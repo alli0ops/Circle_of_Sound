@@ -1,6 +1,6 @@
 # Circle of Sound
 View sounds in a fun and interesting shape -- a circle! 
-View on the Circle of Sound Website --> [View Website](https://alli0ops.github.io/Circle_of_Sound/)
+**View on the Circle of Sound Website ➡️ [View Website](https://alli0ops.github.io/Circle_of_Sound/)**
 
 ## Description
 A creative take on the spectrogram. 
