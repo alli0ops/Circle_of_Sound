@@ -63,7 +63,7 @@ let playPauseBtn;
 let useMicCheckbox;
 
 // Whole sound mode checkbox
-let wholeSoundModeCheckbox;
+let wholeFileModeCheckbox;
 
 // DEFAULT VALUES
 let fmaxDefault = 4300;
@@ -78,15 +78,6 @@ let volumeDefault = 1;
 
 // Presets holding default parameters and songs
 // [name, fmax, fmin, dbmax, dbmin, highPass, lowPass, circleScaleFactor, NOT USED numberOfBins, songFile (pushed in preload)]
-let presetAtlanticDolphin = ['AtlanticDolphin', 24000, 2000, -37, -72, 1000, 22050, 0.5]; //, 10];
-let presetMinke = ['Minke', 2000, 10, -35, -60, 10, 22050, 0.6]; //, 10];
-let presetHumpback = ['Humpback', 2000, 10, -30, -50, 10, 22050, 0.6]; //, 10];
-let presetBeakedDolphin = ['BeakedDolphin', 24000, 1000, -47, -70, 3000, 22050, 0.5]; //, 10];
-let presetBeardedSeal = ['BeardedSeal', 5000, 10, -27, -70, 10, 22050, 0.5]; //, 10];
-let presetHarborPorpoise = ['HarborPorpoise', 24000, 11000, -68, -87, 10000, 22050, 0.5]; //, 10];
-let presetWeddelSeal = ['WeddellSeal', 7500, 10, -38, -70, 10, 22050, 0.5]; //, 10];
-
-let presets = [presetAtlanticDolphin, presetMinke, presetHumpback, presetBeakedDolphin, presetBeardedSeal, presetHarborPorpoise, presetWeddelSeal];
 
 let soundButtonArray = Array(presets.length);
 let currentPlayingSoundIndex = -1;
@@ -95,7 +86,7 @@ let currentSoundFile;
 let numberOfBins = 1024;
 let startDegree = 0;
 let degreesPerFrame = 1;
-let wholeSoundModeFlag = false;
+let wholeFileModeFlag = false;
 let nyquist;
 let fft;
 let fftSmoothing = 0.4;
@@ -107,13 +98,7 @@ let fullSoundFrameRate = 20;
 let mic;
 
 function preload() {
-	presetAtlanticDolphin.push(loadSound('assets/sounds/atlantic-spotted-dolphin.mp3'));
-	presetMinke.push(loadSound('assets/sounds/minke-whale.mp3'));
-	presetHumpback.push(loadSound('assets/sounds/humpback-whale.mp3'));
-	presetBeakedDolphin.push(loadSound('assets/sounds/short-beaked-common-dolphin.mp3'));
-	presetBeardedSeal.push(loadSound('assets/sounds/bearded-seal.mp3'));
-	presetHarborPorpoise.push(loadSound('assets/sounds/harbor-porpoise.mp3'));
-	presetWeddelSeal.push(loadSound('assets/sounds/weddell-seals.mp3'));
+
 }
 
 function setup() {
@@ -384,13 +369,13 @@ function setup() {
 	useMicCheckbox.position(colorSchemeDropDown.x, resetToDefaultBtn.y + 40);
 	useMicCheckbox.changed(useMicrophoneToggle);
 
-	// ----- WHOLE SOUND MODE -----
-	wholeSoundModeCheckbox = createCheckbox('Whole sound mode', false);
-	wholeSoundModeCheckbox.style('color', '#ffffff');
-	wholeSoundModeCheckbox.style('font-size', '15px');
-	wholeSoundModeCheckbox.hide();
-	wholeSoundModeCheckbox.position(colorSchemeDropDown.x, useMicCheckbox.y + 40);
-	wholeSoundModeCheckbox.changed(wholeSoundModeToggle);
+	// ----- WHOLE FILE MODE -----
+	wholeFileModeCheckbox = createCheckbox('Visualize full file length', false);
+	wholeFileModeCheckbox.style('color', '#ffffff');
+	wholeFileModeCheckbox.style('font-size', '15px');
+	wholeFileModeCheckbox.hide();
+	wholeFileModeCheckbox.position(colorSchemeDropDown.x, useMicCheckbox.y + 40);
+	wholeFileModeCheckbox.changed(wholeFileModeToggle);
 
 	// ----- BROWSE BUTTON -----
 	browseFileBtn = createFileInput(handleFile);
@@ -425,8 +410,8 @@ function draw() {
 
 	for (i = 0; i < spectrum.length; i++) {
 		// ---------- ERASER LINES ----------
-		// Only draw these if we are not using wholeSoundMode
-		if (wholeSoundModeFlag == false) {
+		// Only draw these if we are not using wholeFileMode
+		if (wholeFileModeFlag == false) {
 			/*let eraserRadius = map(i, 0, numberOfBins, 40, circleScale, true); // Hz from 1 to 23kHz -> 10 to 100 radius
 	  	let xE1 = width/2 + (eraserRadius * cos(startDegree+3*degreesPerFrame));
 			let yE1 = height/2 + (eraserRadius * sin(startDegree+3*degreesPerFrame));
@@ -533,7 +518,7 @@ function windowResized() {
 	colorSchemeText.position(colorSchemeDropDown.x, colorSchemeDropDown.y - 25);
 	resetToDefaultBtn.position(colorSchemeDropDown.x, colorSchemeDropDown.y + 40);
 	useMicCheckbox.position(colorSchemeDropDown.x, resetToDefaultBtn.y + 40);
-	wholeSoundModeCheckbox.position(colorSchemeDropDown.x, useMicCheckbox.y + 40);
+	wholeFileModeCheckbox.position(colorSchemeDropDown.x, useMicCheckbox.y + 40);
 	browseFileBtn.position(10, showAdvancedCheckBox.y);
 	playPauseBtn.position(browseFileBtn.x, browseFileBtn.y + 30);
 
@@ -574,7 +559,7 @@ function advanceSettingsToggle(_fullScreenToggle) {
 
 		useMicCheckbox.show();
 
-		wholeSoundModeCheckbox.show();
+		wholeFileModeCheckbox.show();
 	}
 
 	if ((showAdvancedCheckBox.checked() == false) | (fullScreenToggle == true)) {
@@ -599,7 +584,7 @@ function advanceSettingsToggle(_fullScreenToggle) {
 
 		useMicCheckbox.hide();
 
-		wholeSoundModeCheckbox.hide();
+		wholeFileModeCheckbox.hide();
 	}
 
 	if (fullScreenToggle == true) {
@@ -756,7 +741,7 @@ function handleFile(file) {
 function fileLoaded() {
 	currentSoundFile.amp(volumeSlider.value(), 0.2);
 	calculateDegreesPerFrame();
-	if (wholeSoundModeFlag == true) {
+	if (wholeFileModeFlag == true) {
 		currentSoundFile._looping = false;
 		currentSoundFile.play();
 	} else {
@@ -819,7 +804,7 @@ function playSound(soundIndex) {
 
 	// loop
 	currentSoundFile.amp(volumeSlider.value(), 0.2);
-	if (wholeSoundModeFlag == true) {
+	if (wholeFileModeFlag == true) {
 		currentSoundFile._looping = false;
 		currentSoundFile.play();
 	} else {
@@ -836,7 +821,7 @@ function playPause() {
 		noLoop();
 	} else {
 		calculateDegreesPerFrame();
-		if (wholeSoundModeFlag == true) {
+		if (wholeFileModeFlag == true) {
 			currentSoundFile._looping = false;
 			currentSoundFile.play();
 		} else {
@@ -861,16 +846,16 @@ function useMicrophoneToggle() {
 	}
 }
 
-function wholeSoundModeToggle() {
-	console.log('wholeSoundModeToggle');
-	wholeSoundModeFlag = wholeSoundModeCheckbox.checked();
+function wholeFileModeToggle() {
+	console.log('wholeFileModeToggle');
+	wholeFileModeFlag = wholeFileModeCheckbox.checked();
 	background(0);
 
 	if (currentSoundFile && currentSoundFile.isPlaying()) {
 		calculateDegreesPerFrame();
 		currentSoundFile.stop();
 		currentSoundFile.jump(0);
-		if (wholeSoundModeFlag == true) {
+		if (wholeFileModeFlag == true) {
 			currentSoundFile._looping = false;
 			currentSoundFile.play();
 		} else {
@@ -878,7 +863,7 @@ function wholeSoundModeToggle() {
 		}
 	}
 
-	if (wholeSoundModeFlag == true) {
+	if (wholeFileModeFlag == true) {
 		frameRate(fullSoundFrameRate);
 	} else {
 		frameRate(144);
@@ -887,7 +872,7 @@ function wholeSoundModeToggle() {
 }
 
 function calculateDegreesPerFrame() {
-	if (wholeSoundModeFlag == true) {
+	if (wholeFileModeFlag == true) {
 		degreesPerFrame = 360 / (currentSoundFile.duration() * fullSoundFrameRate);
 	} else {
 		degreesPerFrame = 1;
